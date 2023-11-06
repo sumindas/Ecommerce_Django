@@ -171,11 +171,6 @@ class ProductReview(models.Model):
     star_rating = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
        
-class ReplyMessage(models.Model):
-    review = models.ForeignKey(ProductReview, on_delete=models.CASCADE)
-    admin = models.ForeignKey(CustomUser,on_delete=models.CASCADE,default=CustomUser.objects.get(is_staff=True))
-    message_text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
     
 class Coupon(models.Model):
     code = models.CharField(max_length=50, unique=True)

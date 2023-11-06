@@ -9,7 +9,6 @@ from django.views.decorators.cache import cache_control, never_cache
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404
 from django.db.models import F
-from .forms import *
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from django.db.models import F, Q
@@ -571,29 +570,6 @@ def add_offer_to_category(request):
         },
     )
 
-
-def reply_to_review(request, review_id):
-    if not request.user.is_superuser:
-        return HttpResponseForbidden("Access denied")
-
-    if request.method == "POST":
-        form = ReplyForm(request.POST)
-        if form.is_valid():
-            review = get_object_or_404(ProductReview, id=review_id)
-
-            reply = form.save(commit=False)
-            reply.review = review
-            reply.admin = request.user
-            reply.save()
-
-            return redirect("admin_reviews")
-    else:
-        form = ReplyForm()
-    return render(
-        request,
-        "adminn/pages/tables/admin_reviews.html",
-        {"form": form, "review": review},
-    )
 
 
 class NotificationListView(ListView):
