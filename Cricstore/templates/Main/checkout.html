@@ -1,0 +1,399 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load product_tags %}
+{% block content %}
+{% load cart_tag %}
+{% load coupon_filters %}
+
+<style>
+    h3 { color: #FF5733; }
+    h4 { color: #3498db; }
+    h5 { color: #e74c3c; }
+    #address_1 + .form-check-label { color: #3498db; }
+    #address_2 + .form-check-label { color: #3498db; }
+    #address_3 + .form-check-label { color: #3498db; }
+    .modal-content {
+        background: linear-gradient(45deg, #3498db, #e74c3c);
+        color: #fff;
+    }
+</style>
+
+<main>
+<form action="{% url 'place_order' %}" method="post" name="checkout">
+    {% csrf_token %}
+    <div class="page-banner-area page-banner-height-2" data-background="{% static 'assets/img/banner/page-banner-4.jpg'%}">
+        <div class="container">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="page-banner-content text-center">
+                            <h4 class="breadcrumb-title">Checkout</h4>
+                            <div class="breadcrumb-two">
+                                <nav>
+                                    <nav class="breadcrumb-trail breadcrumbs">
+                                        <ul class="breadcrumb-menu">
+                                            <li class="breadcrumb-trail">
+                                                <a href="{% url 'home' %}"><span>Home</span></a>
+                                            </li>
+                                            <li class="trail-item">
+                                                <span>Checkout</span>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="coupon-area pt-120 pb-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="coupon-accordion">
+                        <h3>Have a coupon? <span id="showcoupon">Check Here</span></h3>
+                        <div id="coupon-feedback" class="text-danger"></div>
+                        <div id="checkout_coupon" class="coupon-checkout-content">
+                            <div class="coupon-info">
+                                {% comment %} <form action="{% url 'checkout' %}" method="post" name="coupon">
+                                    {% csrf_token %} {% endcomment %}
+                                    <input type="hidden" name="applied_coupon" id="applied-coupon" value="">
+                                    <div class="checkout-coupon">
+                                        <div class="coupon-select">
+                                            <select name="coupon_code" id="coupon-code">
+                                                <option value="">Select a coupon</option>
+                                                {% for coupon in coupons %}
+                                                    <option value="{{ coupon.code }}" data-discount="{{ coupon.discount }}">
+                                                        {{ coupon.code }} - {{ coupon.discount }}% off
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <button class="tp-btn-h1" id="apply-coupon-button" style="height: 10px; margin-left: 10px; padding: 20px" type="submit">Apply Coupon</button>
+                                    </div>
+                                {% comment %} </form> {% endcomment %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="category-offers-accordion">
+                        <h3>Category Offers ?<span id="show-category-offers">Check Here</span></h3>
+                        <div id="category-offers-feedback" class="text-success"></div>
+                        <div class="category-offers-checkout-content">
+                            <div class="category-offers-info">
+                                {% comment %} <form action="{% url 'checkout' %}" method="post" name="category">
+                                    {% csrf_token %} {% endcomment %}
+                                    <div class="checkout-category-offers">
+                                        <div class="category-offers-select">
+                                            <select name="category_offer" id="category-offer">
+                                                <option value="">Select a category offer</option>
+                                                {% for product_id, offers in product_category_offers.items %}
+                                                    {% for offer in offers %}
+                                                        <option value="{{ offer.id }}" data-discount="{{ offer.discount }}">
+                                                            {{ offer.title }} - {{ offer.discount }}% off
+                                                        </option>
+                                                    {% endfor %}
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <button class="tp-btn-h1" id="apply-category-offer-button" style="height: 10px; margin-left: 10px; padding: 20px" type="submit">Apply Category Offer</button>
+                                    </div>
+                                {% comment %} </form> {% endcomment %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="checkout-area pb-85">
+        <div class="container">
+            <div class="row ">
+                <div class="col-lg-6">
+                    <div class="checkbox-form">
+                        <h3>Billing Details</h3>
+                        <div class="row">
+                            <div class="checkout-form-list">
+                                <label style="font-weight: bold;">Select Billing Address:</label>
+                                <div class="form-check">
+                                    {% for address in address_list %}
+                                        {% if not address.is_deleted %}
+                                            <input class="form-check-input" type="radio" name="billing_address" id="address_{{ address.id }}" value="{{ address.id }}">
+                                            <label class="form-check-label" name="addressid" for="address_{{ address.id }}">
+                                                {{ address.first_name  }} {{address.last_name}}, {{ address.email }}, {{ address.address }},
+                                                {{address.country}},{{address.state}},{{address.city}},{{address.pin_code}},
+                                                {{address.number}}
+                                            </label>
+                                            <br>
+                                            <input type="hidden" name="ship_to_different_address" id="ship-to-different-address">
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="different-address">
+                        <div class="ship-different-title">
+                            <a href="#" id="add-address-link" class="btn btn-primary" data-toggle="modal" data-target="#add-address-modal">Add New Address</a>
+
+                        </div>
+                        <div class="modal fade" id="add-address-modal" tabindex="-1" role="dialog" aria-labelledby="addAddressModal" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Add New Address</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Address form -->
+                                        <form action="{% url 'add_address' %}" method = "post"  id="add-address-form">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" id="form-action" value="add_address">
+                                            <div class="form-group">
+                                                <label for="firstName">First Name</label>
+                                                <input type="text" class="form-control" name="fname" id="firstName" placeholder="Enter First Name" >
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="lastName">Last Name</label>
+                                                <input type="text" class="form-control" name="lname" id="lastName" placeholder="Enter Last Name" >
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="email">Email Address</label>
+                                                <input type="email" class="form-control" name="email" id="email" placeholder="Enter Email Address" >
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="phoneNumber">Phone Number</label>
+                                                <input type="tel" class="form-control" name="phone" id="phoneNumber" placeholder="Enter Phone Number" >
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="address">Address</label>
+                                                <input type="text" class="form-control" name="address" id="address" placeholder="Enter Address" >
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="country">Country</label>
+                                                <input type="text" class="form-control" name="country" id="country" placeholder="Enter Country" >
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="state">State</label>
+                                                <input type="text" class="form-control" name="state" id="state" placeholder="Enter State" >
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="city">City</label>
+                                                <input type="text" class="form-control" name="city" id="city" placeholder="Enter City" >
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="pinCode">Pin Code</label>
+                                                <input type="text" class="form-control" name="pincode" id="pinCode" placeholder="Enter Pin Code" >
+                                            </div>
+                                            
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" id="save-address-button">Save Address</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="col-lg-6">
+                    <div class="your-order mb-30">
+                        <h3>Your order</h3>
+                        <div class="your-order-table table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="font-weight: bold;" class="product-name text-center">Product</th>
+                                        <th style="font-weight: bold;" class="product-quantity text-center">Quantity</th>
+                                        <th style="font-weight: bold;" class="product-total text-center">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for key,value in cart.items %}
+                                    <tr class="cart_item">
+                                        <td class="product-name text-dark">
+                                            {{value.product_name}}
+                                        </td>
+                                        <td class="product-quantity text-dark text-center">
+                                            {{value.quantity}}
+                                        </td>
+                                        <td class="product-total text-dark text-center">
+                                            <span class="amount">₹ {{ value.price|multiply:value.quantity }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <td colspan="3">Subtotal</td>
+                                        <td id="total"><strong>{{cart_total_amount}}</strong></td>
+                                    </tr>
+                                
+                                    <tr class="Sub-total">
+                                        <th class="text-primary">Discount</th>
+                                        <td><strong><span class="amount text-dark" id="coupon-discount"> 0%</span></strong></td>
+                                    </tr>
+                                    <tr class="Cat-offer">
+                                        <th class="text-primary">Category_Offer</th>
+                                        <td><strong><span class="amount text-dark" id="category-discount">0%</span></strong></td>
+                                    </tr>
+                                    <tr class="Delivery Charge">
+                                        {% with lower_limit=1 upper_limit=300 %}
+                                        {% if cart_total_amount >= lower_limit and cart_total_amount <= upper_limit %} 
+                                        <th class="text-primary">Delivery Charge</th>
+                                        <td><strong><span class="amount text-primary" id="delivery-charge">₹ 40</span></strong></td>
+                                    </tr>
+                                    <tr class="order-total">
+                                        <th class="text-primary"><strong>Order Total</strong></th>
+                                        <td><strong><span class="amount" id="order-total">₹ {{cart_total_amount|add:40}}</span></strong></td>
+                                    </tr>
+                                    {% else %}
+                                    <th class="text-primary">Delivery Charge</th>
+                                    <td><strong><span class="amount text-success" id="delivery-charge">₹ Free</span></strong></td>
+                                </tr>
+                                <tr class="order-total">
+                                    <th class="text-primary" name="order-total"><strong>Order Total</strong></th>
+                                    <td><strong><span class="amount text-dark" name="order-total" id="order-total">₹ {{cart_total_amount}}</span></strong></td>
+                                </tr>
+                                {% endif %}
+                                {% endwith %}
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="payment-method">
+                            <h4>Payment Method</h4>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="cash_on_delivery" value="cash_on_delivery">
+                                <label class="form-check-label" for="cash_on_delivery">
+                                    Cash on Delivery
+                                </label>
+                            </div>        
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="razorpay" value="Pay with Razorpay">
+                                <label class="form-check-label" for="razorpay">
+                                    Pay with Razorpay
+                                </label>
+                            </div>
+                        </div>
+                        <div class="order-button-payment mt-20">
+                            <button id="place-order-button" type="submit" class="tp-btn-h1">Place order</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </section>
+</form>
+</main>
+        
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const couponDiscountElement = document.getElementById("coupon-discount");
+                const categoryDiscountElement = document.getElementById("category-discount");
+                const totalAmountElement = document.getElementById("order-total");
+                const deliveryChargeElement = document.getElementById("delivery-charge");
+                const couponCodeElement = document.getElementById("applied-coupon");
+                const categoryOfferElement = document.getElementById("applied-category-offer");
+    
+                function updateDiscountElements(discountElement, totalAmountElement, discount, feedbackElement, feedbackMessage) {
+                    discountElement.textContent = `${discount.toFixed(0)}%`;
+    
+                    const cartTotalAmount = parseFloat(totalAmountElement.textContent.replace("₹", ""));
+                    const discountAmount = (cartTotalAmount * discount) / 100;
+                    const totalAmount = cartTotalAmount - discountAmount;
+    
+                    totalAmountElement.textContent = `₹ ${totalAmount.toFixed(2)}`;
+    
+                    if (cartTotalAmount < 300) {
+                        const deliveryCharge = 40;
+                        const newTotalAmount = totalAmount + deliveryCharge;
+                        totalAmountElement.textContent = `₹ ${newTotalAmount.toFixed(2)}`;
+                        deliveryChargeElement.textContent = `₹ ${deliveryCharge.toFixed(2)}`;
+                    }
+    
+                    feedbackElement.textContent = feedbackMessage;
+    
+                    // Store the applied coupon and category offer in the session
+                    couponCodeElement.value = feedbackMessage;
+                    categoryOfferElement.value = feedbackMessage;
+                }
+    
+                function applyDiscount(buttonId, selectId, discountElement, feedbackElement, feedbackMessage) {
+                    const applyButton = document.getElementById(buttonId);
+                    if (applyButton) {
+                        applyButton.addEventListener("click", function (event) {
+                            event.preventDefault(); // Prevent the default form submission
+    
+                            const select = document.getElementById(selectId);
+                            const selectedOption = select.options[select.selectedIndex];
+    
+                            if (!selectedOption) {
+                                feedbackElement.textContent = "Please select an offer.";
+                                return;
+                            }
+    
+                            const receivedDiscount = parseFloat(selectedOption.getAttribute("data-discount")) || 0;
+                            updateDiscountElements(discountElement, totalAmountElement, receivedDiscount, feedbackElement, `${selectedOption.value} applied successfully!`);
+                        });
+                    }
+                }
+    
+                // Apply coupon discount
+                applyDiscount("apply-coupon-button", "coupon-code", couponDiscountElement, document.getElementById("coupon-feedback"), "Coupon");
+    
+                // Apply category offer discount
+                applyDiscount("apply-category-offer-button", "category-offer", categoryDiscountElement, document.getElementById("category-offers-feedback"), "Category Offer");
+            });
+    
+        
+        
+            $(document).ready(function() {
+                // Open the modal when the "Add New Address" button is clicked
+                $("#add-address-link").click(function() {
+                    $("#add-address-modal").modal("show");
+                });
+            
+                // Save the address when the "Save Address" button is clicked
+                $("#save-address-button").click(function() {
+                    // Submit the form
+                    $("#add-address-form").submit();
+                });
+            });
+            
+            $(document).ready(function() {
+                // Open the modal when the "Add New Address" button is clicked
+                $("#add-address-link").click(function() {
+                    $("#add-address-modal").modal("show");
+                    // Set the hidden input field value to "add_address"
+                    $("#form-action").val("add_address");
+                });
+            
+                // Save the address when the "Save Address" button is clicked
+                $("#save-address-button").click(function() {
+                    // Set the hidden input field value to "add_address"
+                    $("#form-action").val("add_address");
+                });
+            
+                // Handle the radio button change event
+                $('input[name="billing_address"]').change(function() {
+                    if (this.checked) {
+                        // An address is selected, set the form-action to "place_order"
+                        $("#form-action").val("place_order");
+                    }
+                });
+            });
+            
+
+
+            
+            
+        </script>            
+
+        {% endblock content %}
+        
+        

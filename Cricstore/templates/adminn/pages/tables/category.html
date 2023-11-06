@@ -1,0 +1,129 @@
+{% extends 'admin-base.html' %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% load static %}
+
+{% block content %}
+<style>
+.btn-primary {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.category-table {
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px auto; 
+}
+
+
+
+.table-header {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+
+.table-cell {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+}
+
+.category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.category-item .btn {
+    margin: 5px;
+}
+
+
+
+
+
+
+
+</style>
+
+<div class="container">
+    <div class="row justify-content-center"> <!-- Center-align the content -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body" style= "margin-left:170px">
+
+                    <h1>Main Categories</h1>
+
+                    <!-- Add a button to create a new main category -->
+                    <a href="{% url 'add-maincategory' %}" class="btn btn-primary">Add New</a>
+
+                    <!-- Create a table-like structure using CSS classes -->
+                    <div class="category-table">
+                        <div class="table-header">
+                            <div class="table-cell">Category id</div>
+                            <div class="table-cell">Category Name</div>
+                            <div class="table-cell">Actions</div>
+                        </div>
+                        <ul class="category-list">
+                            {% for category in maincategory %}
+                                <li class="category-item">
+                                    <div class="table-cell">{{ category.id }}</div>
+                                    <div class="table-cell">{{ category.name }}</div>
+                                    <div class="table-cell">
+                                       
+                                        <a href ="/adminn/edit_maincategory/{{category.id}}" class="btn btn-warning">Edit</a>
+                                       
+                            
+
+<!-- Add a button to trigger the modal -->
+                                <a href="" class="btn btn-danger" data-toggle="modal" data-target="#confirmDeleteModal{{ category.id }}">Delete</a>
+
+                                <!-- Delete Confirmation Modal -->
+                                <div class="modal fade" id="confirmDeleteModal{{ category.id }}" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="confirmDeleteModalLabel{{ category.id }}">Confirm Deletion</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">{{category.name}}
+                                                Are you sure you want to delete this category?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                <a href="/adminn/delete_maincategory/{{category.id}}" class="btn btn-danger">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+
+
+{% endblock content %}

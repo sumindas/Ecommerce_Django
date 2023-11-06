@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load cart_tag %}
+{% load product_tags %}
+<style>
+    .product-image-container {
+        width: 200px; /* Set the desired width */
+        height: 200px; /* Set the desired height */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden; /* Hide overflowing content */
+        position: relative;
+    }
+
+    .product-image-container img {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+    }
+</style>
+
+
+<main>
+    <!-- breadcrumb__area-start -->
+    <section class="breadcrumb__area box-plr-75">
+        <div class="container">
+            <div class="row">
+                <div class="col-xxl-12">
+                    <div class="breadcrumb__wrapper">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Shop</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- breadcrumb__area-end -->
+
+    <!-- shop-area-start -->
+    <div class="shop-area mb-20">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-4">
+                    <div class="product-widget mb-30">
+                        <h5>Product Categories</h5>
+                        <div class="widget-category-list mt-20">
+                            <form method="GET" action="{% url 'shop' %}" id="filter-form">
+                                {% for main in main_category %}
+                                {% if not main.is_deleted %}
+                                <div class="single-widget-category">
+                                    <input type="checkbox" name="category" id="{{ main.id }}" class="filter-checkbox" name="cat-item" value="{{ main.id }}" {% if main.id in selected_categories %}checked{% endif %}>
+                                    <label for="{{ main.id }}">{{ main.name }}</label>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="product-widget mb-30">
+                        <h5>Price Range</h5>
+                        <div class="widget-price-range mt-20">
+                            <form method="GET" action="{% url 'shop' %}" id="price-filter-form">
+                                <div class="price-range">
+                                    <label for="min-price">Min Price:</label>
+                                    <input type="number" id="min-price" name="min_price" value="{{ request.GET.min_price }}" class="form-control" placeholder="Min Price">
+                                </div>
+                                <div class="price-range">
+                                    <label for="max-price">Max Price:</label>
+                                    <input type="number" id="max-price" name="max_price" value="{{ request.GET.max_price }}" class="form-control" placeholder="Max Price">
+                                </div>
+                                <button type="submit" style = "margin-top:10px" class="btn btn-primary">Apply</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-9 col-md-8">
+                    <div class="product-lists-top">
+                        <div class="product__filter-wrap">
+                            <div class="row align-items-center">
+                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
+                                    <div class="product__filter d-sm-flex align-items-center">
+                                        <div class="product__col">
+                                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link active" id="FourCol-tab" data-bs-toggle="tab" data-bs-target="#FourCol" type="button" role="tab" aria-controls="FourCol" aria-selected="true">
+                                                        <i class="fal fa-th"></i>
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="FiveCol-tab" data-bs-toggle="tab" data-bs-target="#FiveCol" type="button" role="tab" aria-controls="FiveCol" aria-selected="false">
+                                                        <i class="fal fa-list"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="productGridTabContent">
+                        <div class="tab-pane fade show active" id="FourCol" role="tabpanel" aria-labelledby="FourCol-tab">
+                            <div class="tp-wrapper">
+                                <div class="row g-0" id="filteredproducts">
+                                    {% for prod in product %}
+                                    {% if not prod.is_deleted %}
+                                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                                        <div class="product__item product__item-d" data-category="{{ prod.categories }}">
+                                            <div class="product__thumb fix">
+                                                <div class="product-image w-img product-image-container">
+                                                    <a href="{{ prod.get_absolute_url }}">
+                                                        <img src="/media/{{ prod.featured_image }}" alt="product" >
+                                                    </a>
+                                                </div>
+                                                <div class="product-action">
+                                                    <a href="{% url 'add_to_wish' prod.id %}" class="icon-box icon-box-1">
+                                                        <i class="fal fa-heart"></i>
+                                                        <i class="fal fa-heart"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="product__content-3">
+                                                <h6><a href="{{ prod.get_absolute_url }}">{{ prod.product_name|truncatewords:8 }}</a></h6>
+                                                <div class="rating mb-5">
+                                                </div>
+                                                <div class="price mb-10">
+                                                    <span>₹ {% call_sellprice prod.price prod.discount %}</span>&nbsp;&nbsp;<del>{{prod.price}}</del>
+                                                </div>
+                                            </div>
+                                            <div class="product__add-cart-s text-center">
+                                                {% if prod.availability|sub:prod.total_quantity <= 0 %}
+                                                    <button type="button" class="cart-btn d-flex mb-10 align-items-center justify-content-center w-100" style="color:red" disabled>
+                                                        Out of Stock
+                                                    </button>
+                                                {% else %}
+                                                    <a href="{% url 'cart_add' prod.id %}" type="button" class="cart-btn d-flex mb-10 align-items-center justify-content-center w-100">
+                                                        Add to Cart
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <div class="pagination">
+                                        <span class="step-links">
+                                            {% if product.has_previous %}
+                                                <a href="?page=1">&laquo; first</a>
+                                                <a href="?page={{ product.previous_page_number }}">previous</a>
+                                            {% endif %}
+                                            
+                                            <span class="current-page">
+                                                Page {{ product.number }} of {{ product.paginator.num_pages }}.
+                                            </span>
+                                            
+                                            {% if product.has_next %}
+                                                <a href="?page={{ product.next_page_number }}">next</a>
+                                                <a href="?page={{ product.paginator.num_pages }}">last &raquo;</a>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+</main>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const categoryCheckboxes = document.querySelectorAll('.filter-checkbox');
+    categoryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            document.getElementById('filter-form').submit();
+        });
+    });
+</script>
+{% endblock content %}
+
+

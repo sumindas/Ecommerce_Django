@@ -1,0 +1,100 @@
+{% extends 'admin-base.html' %}
+
+
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12" style="margin-left: 100px;">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title"><b>User List</b></h3>
+                    <div class="table-responsive">
+                        <!-- User List Table -->
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Manage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.full_name }}</td>
+                                    <td>{{ user.email }}</td>
+                        
+                                        <td>
+                                            {% if user.is_active %}
+                                                    <span class="text-success">Active</span>
+                                            {% else %}
+                                                    <span class="text-danger">Blocked</span>
+                                            {% endif %}
+                                          </td>
+                                    
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#manageModal{{ user.id }}">Manage</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Block Confirmation Modal for each user -->
+                                <div class="modal fade" id="manageModal{{ user.id }}" tabindex="-1" role="dialog" aria-labelledby="manageModalLabel{{ user.id }}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="manageModalLabel{{ user.id }}">Manage User</h5>
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to {% if user.is_active %}block "{{user.full_name}}" {% else %}unblock "{{user.full_name}}"" {% endif %} user?
+                                          </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                          {% if user.is_active %}
+                                          <a href = "/adminn/block_user/{{user.id}}" type="button" class="btn btn-primary">Save</a>
+                                          {% else %}
+                                          <a href ="/adminn/unblock_user/{{user.id}}"  type="button" class="btn btn-primary">Save</a>
+                                          {% endif %}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pagination">
+                          <span class="step-links">
+                              {% if users.has_previous %}
+                                  <a href="?page=1">&laquo; first</a>
+                                  <a href="?page={{ users.previous_page_number }}">previous</a>
+                              {% endif %}
+                              
+                              <span class="current-page">{{ users.number }} of {{ users.paginator.num_pages }}</span>
+                              
+                              {% if users.has_next %}
+                                  <a href="?page={{ users.next_page_number }}">next</a>
+                                  <a href="?page={{ users.paginator.num_pages }}">last &raquo;</a>
+                              {% endif %}
+                          </span>
+                      </div>
+                        <!-- End User List Table -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+{% endblock %} 

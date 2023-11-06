@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+        <script src="{% static 'admin/js/jquery.init.js' %}"></script>
+
+        {% comment %} <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> {% endcomment %}
+
+    </head>
+    <style>
+        /* Style for the search suggestions */
+        .suggestions-container {
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    
+        .suggestion {
+            width: 392px;
+            padding: 10px;
+            font-size: 14px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+    
+        .suggestion:last-child {
+            border-bottom: none;
+        }
+    
+        /* Style for the product name within the suggestion */
+        .product-name {
+            font-weight: bold;
+        }
+    
+        /* Style for the categories within the suggestion */
+        .categories {
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+    <body>
+        <!-- header-start -->
+ <header class="header d-blue-bg">
+     <div class="header-mid">
+         <div class="container">
+             <div class="heade-mid-inner">
+                 <div class="row align-items-center">
+                     <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4">
+                         <div class="header__info">
+                             <div class="logo">
+                                 <a href="" class="logo-image"><img src="{% static '/assets/img/logo/logo-removebg-preview.png' %}" alt="logo"></a>
+                             </div>
+                         </div>
+                     </div>
+                     <div class="header__search">
+                        <form method="GET" action="{% url 'shop' %}" id="search-form">
+                            <div class="header__search-box">
+                                <input class="search-input" type="text" name="q" placeholder="I'm shopping for..." value="{{ request.GET.q }}" id="search-input" autocomplete="off">
+                                <button class="button" type="submit"><i class="far fa-search"></i></button>
+                            </div>
+                        </form>
+                        <div id="search-suggestions" class="suggestions-container">
+                            {% if suggestions %}
+                                {% for suggestion in suggestions %}
+                                    <div class="suggestion" onclick="selectSuggestion('{{ suggestion.product_name }}')">
+                                        <span class="product-name">{{ suggestion.product_name }}</span>
+                                        <br>
+                                        <span class="categories">Categories: {{ suggestion.categories }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                    </div>
+                     {% include 'includes/model.html'%}
+                 </div>
+             </div>
+         </div>
+     </div>
+     <div class="header__bottom">
+         <div class="container">
+             <div class="row g-0 align-items-center">
+                 <div class="col-lg-3">                        
+                     
+                 </div>
+                 <div class="col-lg-6 col-md-6 col-3">
+                   <div class="header__bottom-left d-flex d-xl-block align-items-center">
+                     <div class="side-menu d-lg-none mr-20">
+                       <button type="button" class="side-menu-btn offcanvas-toggle-btn"><i class="fas fa-bars"></i></button>
+                     </div>
+                     <div class="main-menu d-none d-lg-block">
+                         <nav>
+                            <ul>
+                                <li {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}><a href="{% url 'home' %}">Home <i class=""></i></a></li>
+                                <li {% if request.resolver_match.url_name == 'shop' %}class="active"{% endif %}><a href="{% url 'shop' %}">Shop</a></li>
+                                <li {% if request.resolver_match.url_name == 'category_products' and 'Bats' in request.resolver_match.kwargs.main_category %}class="active"{% endif %}><a href="{% url 'category_products' 'Bats' %}">Bats</a></li>
+                                <li {% if request.resolver_match.url_name == 'category_products' and 'Balls' in request.resolver_match.kwargs.main_category %}class="active"{% endif %}><a href="{% url 'category_products' 'Balls' %}">Balls</a></li>
+                                <li {% if request.resolver_match.url_name == 'category_products' and 'Equipments' in request.resolver_match.kwargs.main_category %}class="active"{% endif %}><a href="{% url 'category_products' 'Equipments' %}">Equipments</a></li>
+                                <li {% if request.resolver_match.url_name == 'category_products' and 'Accessories' in request.resolver_match.kwargs.main_category %}class="active"{% endif %}><a href="{% url 'category_products' 'Accessories' %}">Accessories</a></li>  
+                            </ul>
+                            
+                        </nav>
+                    </div>
+                </div>
+             </div>
+         </div>
+     </div>
+ </header>
+ <!-- header-end -->
+ <div id="search-results">
+    <!-- Search results will be displayed here -->
+</div>
+        
+
+
+    </body>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function selectSuggestion(productName) {
+            // Set the input field value with the selected product name
+            $('#search-input').val(productName);
+            
+            // Submit the form
+            $('#search-form').submit();
+        }
+    
+        $(document).ready(function () {
+            $('#search-input').on('keyup', function () {
+                var query = $(this).val();
+                if (query.length > 0) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '{% url "search_suggestions" %}',
+                        data: { 'q': query },
+                        success: function (data) {
+                            $('#search-suggestions').html(data);
+                            $('#search-suggestions').show();
+                        }
+                    });
+                } else {
+                    $('#search-suggestions').html('');
+                    $('#search-suggestions').hide();
+                }
+            });
+        });
+    </script>
+    
+    
+    
+
+
+</html>

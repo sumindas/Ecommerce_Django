@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    
+        /* CSS for yellow buttons with hover effect */
+    .btn-yellow {
+        background-color: #ffc107; /* Yellow color */
+        color: #fff; /* Text color */
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Smooth transition on hover */
+    }
+    
+    /* Hover effect */
+    .btn-yellow:hover {
+        background-color: #ffca28; /* Lighter yellow color on hover */
+    }
+    /* Reset some default styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    /* Body background color and font */
+    body {
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+    }
+    
+    /* Container styling */
+    #container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+    }
+    
+    /* Heading styles */
+    h1 {
+        text-align: center;
+        color: #007bff; /* Blue color */
+    }
+    
+    /* Form styling */
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    label {
+        font-weight: bold;
+        color: #28a745; /* Green color */
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="mobile"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        color: #333;
+    }
+    
+    /* Yellow button with hover effect */
+    .btn-yellow {
+        background-color: #ffc107; /* Yellow color */
+        color: #fff; /* Text color */
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Smooth transition on hover */
+    }
+    
+    .btn-yellow:hover {
+        background-color: #ffca28; /* Lighter yellow color on hover */
+    }
+    
+    /* Address section styles */
+    .address-section {
+        border-top: 1px solid #ccc;
+        margin-top: 30px;
+        padding-top: 20px;
+    }
+    
+    .address-heading {
+        font-size: 20px;
+        font-weight: bold;
+        color: #dc3545; /* Red color */
+    }
+    
+    .address-item {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        color: #17a2b8; /* Turquoise color */
+    }
+    
+    /* Add New Address button */
+    .btn-add-address {
+        background-color: #28a745; /* Green color */
+        color: #fff; /* Text color */
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Smooth transition on hover */
+    }
+    
+    .btn-add-address:hover {
+        background-color: #218838; /* Darker green color on hover */
+    }
+    
+    .wallet-info {
+        background-color: #f5f5f5;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: center;
+    }
+    
+    .wallet-balance {
+        font-size: 24px;
+        color: #007bff;
+    }
+    
+    .transaction-list {
+        list-style: none;
+    }
+    
+    .transaction-item {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+    
+    .transaction-details {
+        color: #333;
+    }
+    
+    .transaction-timestamp {
+        font-weight: bold;
+    }
+    
+    .transaction-description {
+        margin-top: 10px;
+    }
+    
+    .transaction-amount {
+        color: #28a745; /* Green color */
+    }
+    
+    
+</style>
+
+<div class="container mt-5" id="container">
+    <div class="row">
+        <!-- Left Sidebar -->
+        <div class="col-lg-3">
+            <div class="list-group">
+                <a href="{% url 'profile' %}" class="list-group-item list-group-item-action active">Account Details</a>
+                <a href="{% url 'address' %}" class="list-group-item list-group-item-action">Address</a>     
+                <a href="{% url 'orders_list' %}" class="list-group-item list-group-item-action">Orders</a>
+                <a href="{% url 'wallet' %}" class="list-group-item list-group-item-action">Wallet</a>
+                <a href="{% url 'logout' %}" class="list-group-item list-group-item-action">Sign Out</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <h2>Wallet Balance</h2>
+            {% if wallet %}
+                <p>User: {{ wallet.user.full_name }}</p>
+                <p>Balance: Rs {{ wallet.user.wallet_bal }}</p>
+                
+            {% else %}
+                <p>No wallet found for this user.</p>
+            {% endif %}
+            <h2>Wallet Transactions</h2>
+            <ul class="transaction-list">
+                {% for transaction in transactions %}
+                    <li class="transaction-item">
+                        <div class="transaction-details">
+                            <strong class="transaction-timestamp">{{ transaction.timestamp }}</strong>
+                            <p class="transaction-description">{{ transaction.description }}</p>
+                            <p class="transaction-amount">Amount: Rs {{ transaction.amount }}</p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+

@@ -1,0 +1,248 @@
+{% extends 'admin-base.html' %}
+{% block content %}
+<style>
+    /* Style for the main container */
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 20px;
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fff;
+        border-radius: 10px;
+        margin: 15% auto; /* Adjust the top margin to center vertically */
+        padding: 20px;
+        width: 60%; /* Adjust the width to set the size */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .close {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    /* Style for the middle container (Select Category and Add Offer button) */
+    .middle-container {
+        text-align: center;
+    }
+
+    /* Style for the right container (All Offers) */
+    .right-container {
+        margin-top: 20px;
+    }
+
+    /* Add your custom styles for the middle container here */
+    .middle-container select {
+        width: 100%;
+        height: 40px;
+        padding: 5px;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        margin-bottom: 10px;
+    }
+
+    .middle-container button {
+        background-color: #007BFF;
+        color: #fff;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Add borders to table, th, and td elements */
+    .offers-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .offers-table th,
+    .offers-table td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+    }
+</style>
+
+<div class="main-container">
+    <div class="middle-container">
+        <button id="openAddOfferToCategoryModalBtn" style="margin-top: 30px">Add Offer to Category</button>
+        <button id="openOfferModalBtn" style="margin-top: 30px">Add Offer</button>
+    </div>
+
+    <div class="right-container">
+        <h2>All Categories with Offers</h2>
+        <table class="offers-table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Category Name</th>
+                    <th>Offer Title</th>
+                    <th>Discount</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in all_categories %}
+                    <tr>
+                        <td>{{ category.name }}</td>
+                        <td>
+                            <ul>
+                                {% for offer_category in category.offercategory_set.all %}
+                                    <li>{{ offer_category.offer.title }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                {% for offer_category in category.offercategory_set.all %}
+                                    <li>{{ offer_category.offer.discount }}%</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                {% for offer_category in category.offercategory_set.all %}
+                                    <li>{{ offer_category.offer.start_date }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                {% for offer_category in category.offercategory_set.all %}
+                                    <li>{{ offer_category.offer.end_date }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>All Offers</h2>
+        <table class="offers-table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Offer Title</th>
+                    <th>Discount</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for offer in all_offers %}
+                    <tr>
+                        <td>{{ offer.title }}</td>
+                        <td>{{ offer.discount }}%</td>
+                        <td>{{ offer.start_date }}</td>
+                        <td>{{ offer.end_date }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" id="addOfferToCategoryModal">
+    <div class="modal-content">
+        <span class="close" id="closeAddOfferToCategoryModal">&times;</span>
+        <h2>Add Offer to Category</h2>
+        <form method="post" action="{% url 'add_offer_to_category' %}">
+            {% csrf_token %}
+            <label for="category">Category:</label>
+            <select name="category" id="category">
+                {% for category in all_categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <label for="offer">Offer:</label>
+            <select name="offer" id="offer">
+                {% for offer in all_offers %}
+                    <option value="{{ offer.id }}">{{ offer.title }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <button type="submit">Add Offer to Category</button>
+        </form>
+    </div>
+</div>
+
+<div class="modal" id="addOfferModal">
+    <div class="modal-content">
+        <span class="close" id="closeAddOfferModal">&times;</span>
+        <h2>Add Offer</h2>
+        <form method="post" action="{% url 'add_offer' %}">
+            {% csrf_token %}
+            <div style="display: flex; flex-direction: column;">
+                <label for="title">Title:</label>
+                <input type="text" name="title" id="title" required>
+                <label for="discount">Discount:</label>
+                <input type="number" name="discount" id="discount" step="0.01" required>
+                <label for="start_date">Start Date:</label>
+                <input type="date" name="start_date" id="start_date" required>
+                <label for="end_date">End Date:</label>
+                <input type="date" name="end_date" id="end_date" required>
+            </div>
+            <button type="submit" style="background-color: #007BFF; color: #fff; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px;">Add Offer</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const openAddOfferToCategoryModalBtn = document.getElementById("openAddOfferToCategoryModalBtn");
+    const addOfferToCategoryModal = document.getElementById("addOfferToCategoryModal");
+    const closeAddOfferToCategoryModal = document.getElementById("closeAddOfferToCategoryModal");
+
+    openAddOfferToCategoryModalBtn.addEventListener("click", () => {
+        addOfferToCategoryModal.style.display = "block";
+    });
+
+    closeAddOfferToCategoryModal.addEventListener("click", () => {
+        addOfferToCategoryModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target == addOfferToCategoryModal) {
+            addOfferToCategoryModal.style.display = "none";
+        }
+    });
+
+    const openOfferModalBtn = document.getElementById("openOfferModalBtn");
+    const addOfferModal = document.getElementById("addOfferModal");
+    const closeAddOfferModal = document.getElementById("closeAddOfferModal");
+
+    openOfferModalBtn.addEventListener("click", () => {
+        addOfferModal.style.display = "block";
+    });
+
+    closeAddOfferModal.addEventListener("click", () => {
+        addOfferModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target == addOfferModal) {
+            addOfferModal.style.display = "none";
+        }
+    });
+</script>
+{% endblock content %}

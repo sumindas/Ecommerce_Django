@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">  <!-- Add a link to your custom CSS file -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    /* CSS for yellow buttons with hover effect */
+.btn-yellow {
+    background-color: #ffc107; /* Yellow color */
+    color: #fff; /* Text color */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+/* Hover effect */
+.btn-yellow:hover {
+    background-color: #ffca28; /* Lighter yellow color on hover */
+}
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body background color and font */
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+/* Container styling */
+#container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+}
+
+/* Heading styles */
+h1 {
+    text-align: center;
+    color: #007bff; /* Blue color */
+}
+
+/* Form styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+    color: #28a745; /* Green color */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="mobile"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #333;
+}
+
+/* Yellow button with hover effect */
+.btn-yellow {
+    background-color: #ffc107; /* Yellow color */
+    color: #fff; /* Text color */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+.btn-yellow:hover {
+    background-color: #ffca28; /* Lighter yellow color on hover */
+}
+
+/* Address section styles */
+.address-section {
+    border-top: 1px solid #ccc;
+    margin-top: 30px;
+    padding-top: 20px;
+}
+
+.address-heading {
+    font-size: 20px;
+    font-weight: bold;
+    color: #dc3545; /* Red color */
+}
+
+.address-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: #17a2b8; /* Turquoise color */
+}
+
+/* Add New Address button */
+.btn-add-address {
+    background-color: #28a745; /* Green color */
+    color: #fff; /* Text color */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+.btn-add-address:hover {
+    background-color: #218838; /* Darker green color on hover */
+}
+.address-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px; /* Adjust the maximum width as needed */
+    margin: 0 auto;
+}
+/* CSS for the individual address boxes */
+.address-box {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #333;
+    max-width: 400px; /* Adjust the maximum width as needed */
+}
+
+.address-box p {
+    margin: 10px 0;
+}
+
+.address-box strong {
+    color: #007bff; /* Blue color for strong text */
+}
+
+.address-box a {
+    text-decoration: none;
+    color: #007bff; /* Blue color for links */
+}
+
+.address-box a:hover {
+    text-decoration: underline;
+}
+
+
+
+
+</style>
+<div class="container mt-5" id="container">
+    <div class="row">
+        <!-- Left Sidebar -->
+        <div class="col-lg-3">
+            <div class="list-group">
+                <a href="{% url 'profile' %}" class="list-group-item list-group-item-action active">Account Details</a>
+                <a href="{% url 'address' %}" class="list-group-item list-group-item-action">Address</a>     
+                <a href="{% url 'orders_list' %}" class="list-group-item list-group-item-action">Orders</a>
+                <a href="{% url 'wallet' %}" class="list-group-item list-group-item-action">Wallet</a>
+                <a href="{% url 'logout' %}" class="list-group-item list-group-item-action">Sign Out</a>
+            </div>
+        </div>
+        <div class = "col-lg-8" id = "address-container">
+
+                        <h3>Manage Address <a style = "margin-left:20px" href="{% url 'add_address' %}" class="btn-add-to-cart d-inline-block"><i class="fa fa-edit"></i>
+                            Add Address</a></h3>
+
+                            {% for address in address_list %}
+                            <div class="address-box">
+                        <address>
+                            <p><strong>{{address.first_name}} {{address.last_name}}</strong></p>
+                               <p> {{address.email}}<br>
+                                {{address.address}}<br>
+                                {{address.country}} {{address.state}}<br>
+                                {{address.city}} {{address.pin_code}}</p>
+                            <p>Mobile: {{address.number}}</p>
+                        </address>
+                            
+                        <a href="{% url 'edit_address' address.id %}" class="btn-add-to-cart d-inline-block"><i class="fa fa-edit"></i>
+                            Edit Address</a>
+                            <a href="" class="btn-delete d-inline-block" data-toggle="modal" data-target="#deleteConfirmationModal{{ address.id }}" >
+                                <i class="fa fa-trash"></i> Delete Address
+                            </a>
+                            <div class="modal fade" id="deleteConfirmationModal{{ address.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteConfirmationModalLabel{{address.id}}">Confirm Deletion</h5>
+                                            <button type="submit" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete this address?</p>
+                                            <p><strong>{{address.first_name}} {{address.last_name}}</strong></p>
+                                            <p> {{address.email}}<br>
+                                                {{address.address}}<br>
+                                                {{address.country}} {{address.state}}<br>
+                                                {{address.city}} {{address.pin_code}}</p>
+                                            <p>Mobile: {{address.number}}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <a href="{% url 'delete_address' address.id %}" class="btn btn-danger">Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            {% endfor %}
+                       
+                    </div>
+                </div>
+                
+</div>
+
+
+
+{% endblock content %}

@@ -1,0 +1,86 @@
+{% extends 'admin-base.html' %}
+
+{% block content %}
+
+<style>
+    /* admin-style.css */
+
+/* Style for the list of orders */
+ul#order {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul#order li {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
+}
+
+/* Style for the "Update Status" button */
+a.update-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    text-decoration: none;
+}
+
+a.update-button:hover {
+    background-color: #0056b3;
+}
+
+/* Style for the manage buttons container */
+.manage-buttons {
+    margin-top: 5px;
+}
+
+/* Style for user details */
+.user-details {
+    font-weight: bold;
+}
+
+/* Style for order status */
+.order-status {
+    color: green; /* You can choose your own color */
+}
+</style>
+
+<div style="margin-left: 350px;">
+    <h2>Update Order Status</h2>
+
+    <div class="order-details">
+        <h3>Order Details</h3>
+        <ul id="order">
+            <li id="order">
+                Order #{{ order.id }} - {{ order.date }} - ₹{{ order.amount }}
+                <div class="user-details">
+                    User: {{ order.user.username }} - Email: {{ order.user.email }}
+                </div>
+                <div class="order-status">
+                    Status: {{ order.get_status_display }}
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="status">New Status:</label>
+        <select name="status" id="status">
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="refunded">Refunded</option>
+            <option value="on_hold">On Hold</option>
+        </select>
+        <br>
+        <input type="submit" value="Update Status">
+    </form>
+</div>
+
+<a href="{% url 'orders' %}">Back to All Orders</a>
+{% endblock content %}

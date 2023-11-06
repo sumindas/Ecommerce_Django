@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Razorpay Payment</title>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Razorpay Payment</title>
+</head>
+<body>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    var order_id = "{{ order_id }}";
+
+    var options = {
+        key: 'rzp_test_FIZcMWBmGnqoqG',
+        amount: 20000, 
+        currency: 'INR',
+        name: 'CrickStore',
+        description: 'Order Payment',
+        image: 'https://yourcompany.com/logo.png',
+        order_id: order_id,
+        handler: function (response) {
+            // Handle the payment response here
+            if (response.razorpay_payment_id) {
+                window.location.href = "{% url 'order_success' %}";
+            } else {
+                alert('Payment failed');
+            }
+        },
+        prefill: {
+            name: 'Customer Name',
+            email: 'customer@email.com',
+            contact: 'customer_phone_number',
+        },
+    };
+
+    var rzp = new Razorpay(options);
+
+    // Open the Razorpay payment dialog
+    rzp.open();
+
+    // Add a custom close button or link within the Razorpay dialog
+    var closeButton = document.createElement("button");
+    closeButton.innerText = "Close Payment";
+    closeButton.style.marginTop = "10px";
+    closeButton.style.display = "block";
+    closeButton.onclick = function () {
+        rzp.close(); // Close the Razorpay dialog
+        window.location.href = "{% url 'checkout' %}"; // Redirect to the checkout page
+    };
+
+    document.body.appendChild(closeButton);
+  </script>
+</body>
+</html>
+
+</head>
+<body>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    var order_id = "{{ order_id }}";
+
+    var options = {
+        key: 'rzp_test_FIZcMWBmGnqoqG',
+        amount: 20000, 
+        currency: 'INR',
+        name: 'CrickStore',
+        description: 'Order Payment',
+        image: 'https://yourcompany.com/logo.png',
+        order_id: order_id,
+        handler: function (response) {
+            if (response.razorpay_payment_id) {
+                window.location.href = "{% url 'order_success' %}";
+            } else {
+                alert('Payment failed');
+            }
+        },
+        prefill: {
+            name: 'Customer Name',
+            email: 'customer@email.com',
+            contact: 'customer_phone_number',
+        },
+    };
+
+    var rzp = new Razorpay(options);
+
+    rzp.open();
+
+    rzp.on('payment.failed', function (response) {
+        window.location.href = "{% url 'checkout' %}";
+        });
+
+</script>
+</body>
+</html>

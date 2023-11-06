@@ -1,0 +1,196 @@
+{% extends 'admin-base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* AddProduct.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+form {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form div {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+button[type="submit"] {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* You can add more styles and customize as needed */
+
+</style>
+<div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h1>Add Product</h1>
+
+        <form method="post" enctype="multipart/form-data" action="{% url 'add_product'%}">
+            {% csrf_token %}
+    
+            <!-- Product Name -->
+            <div>
+                <label for="product_name">Product Name:</label>
+                <input type="text" id="product_name" name="product_name" required>
+            </div>
+    
+            <!-- Total Quantity -->
+            <div>
+                <label for="total_quantity">Total Quantity:</label>
+                <input type="number" id="total_quantity" name="total_quantity" required>
+            </div>
+    
+            <!-- Availability -->
+            <div>
+                <label for="availability">Availability:</label>
+                <input type="number" id="availability" name="availability" required>
+            </div>
+    
+            <!-- Featured Image -->
+            <div>
+                <label for="featured_image">Featured Image:</label>
+                <input type="file" id="featured_image" name="featured_image" accept="image/*" required>
+            </div>
+    
+            <!-- Price -->
+            <div>
+                <label for="price">Price:</label>
+                <input type="number" id="price" name="price" required>
+            </div>
+    
+            <!-- Discount -->
+            <div>
+                <label for="discount">Discount:</label>
+                <input type="number" id="discount" name="discount" required>
+            </div>
+            <!-- Tax -->
+            <div>
+                <label for="tax">Tax:</label>
+                <input type="number" id="tax" name="tax" required>
+            </div>
+    
+    
+            <!-- Product Information (Rich Text) -->
+            <div>
+                <label for="product_information">Product Information:</label>
+                <textarea id="product_information" name="product_information" required></textarea>
+            </div>
+    
+            <!-- Model Name -->
+            <div>
+                <label for="model_name">Model Name:</label>
+                <input type="text" id="model_name" name="model_name" required>
+            </div>
+    
+            <!-- Categories (Dropdown) -->
+            <div>
+                <label for="categories">Categories</label>
+
+            
+                <select class="form-control" id="categories" name="categories" required>
+                    {% for main_category in cat %}
+                    {% if not main_category.is_deleted %}
+                        <option value="{{ main_category.id }}">{{ main_category.name }}</option>
+                        {% for sub_category in main_category.category_set.all %}
+                        {% if not sub_category.is_deleted %}
+                            <option value="{{ sub_category.id }}">-- {{ sub_category.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                
+            </div>
+    
+            <!-- Tags -->
+            <div>
+                <label for="tags">Tags:</label>
+                <input type="text" id="tags" name="tags" required>
+            </div>
+    
+            <!-- Description (Rich Text) -->
+            <div>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+    
+            <!-- Section (Dropdown) -->
+            <div>
+                <label for="section">Section</label>
+                <select id="section" name="section" required>
+                   {% for i in sec %}
+                    <option value="{{i.id}}">{{i.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+    
+            <!-- Slug -->
+            <div>
+                <label for="slug">Slug:</label>
+                <input type="text" id="slug" name="slug" required>
+            </div>
+            
+            <div>
+            <label for="formFileMultiple" class="form-label">Product images</label>
+            <input class="form-control" name="images" type="file" id="formFileMultiple" multiple>
+            </div>
+            <!-- Submit Button -->
+            <div>
+                <button type="submit">Add Product</button>
+            </div>
+        </form>
+    
+      </div>
+    </div>
+
+    
+{% endblock content %}

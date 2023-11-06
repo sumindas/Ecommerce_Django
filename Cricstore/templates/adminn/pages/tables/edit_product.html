@@ -1,0 +1,196 @@
+{% extends 'admin-base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+   
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    form {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    form div {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    input[type="file"] {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    button[type="submit"] {
+        background-color: #007BFF;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body" style="margin-left: 170px;">
+                    <h1>Edit Product</h1>
+
+                    <form method="post" enctype="multipart/form-data" action="/adminn/update_product/{{prod.id}}">
+                        {% csrf_token %}
+
+                        <!-- Product Name -->
+                        <div class="form-group">
+                            <label for="product_name">Product Name:</label>
+                            <input type="text" id="product_name" name="product_name" class="form-control" value="{{ prod.product_name }}" required>
+                        </div>
+
+                        <!-- Total Quantity -->
+                        <div class="form-group">
+                            <label for="total_quantity">Total Quantity:</label>
+                            <input type="number" id="total_quantity" name="total_quantity" class="form-control" value="{{ prod.total_quantity }}" required>
+                        </div>
+
+                        <!-- Availability -->
+                        <div class="form-group">
+                            <label for="availability">Availability:</label>
+                            <input type="number" id="availability" name="availability" class="form-control" value="{{ prod.availability }}" required>
+                        </div>
+
+                        <!-- Featured Image -->
+                        <div class="form-group">
+                            <label for="featured_image">Featured Image:</label>
+                            <input type="file" id="featured_image" name="featured_image" accept="image/*">
+                            <p>Current Image:</p>
+                            <img src="/media/{{ prod.featured_image }}" alt="{{ prod.product_name }}" width="150">
+                        </div>
+
+                        <!-- Price -->
+                        <div class="form-group">
+                            <label for="price">Price:</label>
+                            <input type="number" id="price" name="price" class="form-control" value="{{ prod.price }}" required>
+                        </div>
+
+                        <!-- Discount -->
+                        <div class="form-group">
+                            <label for="discount">Discount:</label>
+                            <input type="number" id="discount" name="discount" class="form-control" value="{{ prod.discount }}" required>
+                        </div>
+
+
+
+                        <!-- Tax -->
+                        <div class="form-group">
+                            <label for="discount">Tax:</label>
+                            <input type="number" id="discount" name="tax" class="form-control" value="{{ prod.tax }}" required>
+                        </div>
+
+                        <!-- Product Information (Rich Text) -->
+                        <div class="form-group">
+                            <label for="product_information">Product Information:</label>
+                            <textarea id="product_information" name="product_information" class="form-control" required>{{ prod.product_information|safe }}</textarea>
+                        </div>
+
+                        <!-- Model Name -->
+                        <div class="form-group">
+                            <label for="model_name">Model Name:</label>
+                            <input type="text" id="model_name" name="model_name" class="form-control" value="{{ prod.model_name }}" required>
+                        </div>
+
+                        <!-- Categories (Dropdown) -->
+                        <div class="form-group">
+                            <label for="categories">Categories</label>
+                            <select class="form-control" id="categories" name="categories" required>
+                                {% for main_category in cat %}
+                                    <option value="{{ main_category.id }}">{{ main_category.name }}</option>
+                                    {% for sub_category in main_category.category_set.all %}
+                                        <option value="{{ sub_category.id }}" {% if sub_category == prod.categories %} selected {% endif %}>-- {{ sub_category.name }}</option>
+                                    {% endfor %}
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="form-group">
+                            <label for="tags">Tags:</label>
+                            <input type="text" id="tags" name="tags" class="form-control" value="{{ prod.tags }}" required>
+                        </div>
+
+                        <!-- Description (Rich Text) -->
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <textarea id="description" name="description" class="form-control" required>{{ prod.description|safe }}</textarea>
+                        </div>
+
+                        <!-- Section (Dropdown) -->
+                        <div class="form-group">
+                            <label for="section">Section</label>
+                            <select id="section" name="section" class="form-control" required>
+                                {% for i in sec %}
+                                    <option value="{{i.id}}" {% if i == prod.section %} selected {% endif %}>{{i.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Slug -->
+                        <div class="form-group">
+                            <label for="slug">Slug:</label>
+                            <input type="text" id="slug" name="slug" class="form-control" value="{{ prod.slug }}" required>
+                        </div>
+
+                        <!-- Product Images -->
+                        <div class="form-group">
+                            <label for="images">Product Images:</label>
+                            <input type="file" id="images" name="images" class="form-control" multiple>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Update Product</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

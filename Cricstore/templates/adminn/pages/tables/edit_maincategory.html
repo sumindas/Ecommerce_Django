@@ -1,0 +1,35 @@
+{% extends 'admin-base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Add your CSS styles here if needed */
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body" style="margin-left: 170px;">
+                    <h1>Edit Main Category</h1>
+
+                    <form method="post" action="/adminn/update_maincategory/{{cat.id}}">
+                        {% csrf_token %}
+
+                        <!-- Category Name -->
+                        <div class="form-group">
+                            <label for="category_name">Category Name:</label>
+                            <input type="text" id="category_name" name="category_name" class="form-control" value="{{ cat.name }}" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

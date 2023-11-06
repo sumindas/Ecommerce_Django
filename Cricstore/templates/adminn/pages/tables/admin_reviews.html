@@ -1,0 +1,217 @@
+{% extends 'admin-base.html' %}
+{% load cart_tag %}
+
+
+
+{% block content %}
+<style>
+    /* Add this CSS to style the admin_reviews.html template */
+
+    .container {
+        margin-top: 20px;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+    }
+
+    .table {
+        border: 1px solid #ccc; /* Add a border to the table */
+        width: 100%; /* Make the table full width */
+    }
+
+    .table th {
+        background-color: #f8f9fa; /* Header background color */
+    }
+
+    /* Style for table rows */
+    .table tbody tr:hover {
+        background-color: #f5f5f5; /* Hover color for rows */
+    }
+
+    /* Style for table cell padding and text alignment */
+    .table th,
+    .table td {
+        padding: 8px;
+        text-align: left;
+    }
+
+    /* Style for table header text */
+    .table th {
+        font-weight: bold;
+    }
+
+    /* Style for date column */
+    .table td:last-child {
+        white-space: nowrap;
+    }
+
+    /* Style for the review rating stars */
+    .review-star {
+        color: #FFD700; /* Gold color for stars */
+    }
+
+    /* Style for the review count */
+    .review-count {
+        color: #666;
+    }
+
+    /* Style for the author image */
+    .author-image img {
+        max-width: 50px;
+        border-radius: 50%; /* Rounded author image */
+    }
+
+    /* Style for the review details content */
+    .review-details-content {
+        margin-left: 10px;
+    }
+
+    /* Style for the name-date section */
+    .name-date {
+        font-size: 14px;
+        color: #666;
+    }
+
+    /* Style for the review text */
+    .review-details-content p {
+        margin-top: 10px;
+        color: #333;
+    }
+
+    /* Style for the "Add a review" section */
+    .comment-title h3 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .comment-title p {
+        font-size: 14px;
+        color: #666;
+    }
+
+    /* Style for the overall ratings */
+    .comment-rating span {
+        font-size: 16px;
+        font-weight: bold;
+        margin-right: 10px;
+        color: #333;
+    }
+
+    .comment-rating ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .comment-rating ul li {
+        display: inline-block;
+        margin-right: 5px;
+        cursor: pointer;
+    }
+
+    .comment-input-box {
+        margin-top: 20px;
+    }
+
+    /* Style for input fields */
+    .comment-input input,
+    .comment-input textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    .comment-input input[type="checkbox"] {
+        margin-right: 5px;
+    }
+
+    /* Style for the "Submit" button */
+    .comment-submit button {
+        background-color: #007BFF; /* Blue submit button */
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .comment-submit button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+    }
+</style>
+<div class="container" style="margin-left: 250px">
+    <h2>Product Reviews</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Review ID</th>
+                <th>User Name</th>
+                <th>User Email</th>
+                <th>Product</th>
+                <th>Review Text</th>
+                <th>Star Rating</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews %}
+                <tr>
+                    <td>{{ review.id }}</td>
+                    <td>{{ review.user_name }}</td>
+                    <td>{{ review.user_email }}</td>
+                    <td>{{ review.product.product_name }}</td>
+                    <td>{{ review.review_text }}</td>
+                    <td>
+                        {% for i in review.star_rating|get_range %}
+                            <i class="fas fa-star review-star"></i>
+                        {% endfor %}
+                    </td>
+                    {% comment %} <td>
+                         <button class="btn btn-primary reply-button" 
+                        data-toggle="modal" data-target="#replyModal{{ review.id }}">Reply</button>
+                    </td> {% endcomment %}
+                    <td>{{ review.created_at }}</td>
+                </tr>
+                <div class="modal fade" id="replyModal{{ review.id }}" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="replyModalLabel">Reply to Review</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                                <div class="form-group">
+                                    <label for="reply_message">Your Reply:</label>
+                                    <textarea class="form-control" id="reply_message" name="reply_message" rows="4"></textarea>
+                                </div>
+                                <a href ="/adminn/reply_to_review/{{ review.id }}" type="submit" class="btn btn-primary">Send Reply</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}
+
+<script>
+    $(document).ready(function() {
+        // Reply button click event
+        $(".reply-button").click(function() {
+            var reviewId = $(this).data("review-id");
+            var modalId = "#replyModal" + reviewId;
+
+            // Open the corresponding modal
+            $(modalId).modal('show');
+        });
+    });
+</script>
+
+

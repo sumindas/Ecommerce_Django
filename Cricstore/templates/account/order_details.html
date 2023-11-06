@@ -1,0 +1,146 @@
+<!-- order_detail.html -->
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% load cart_tag %}
+<style>
+    .btn-return {
+        background-color: #ff0000; /* Red color */
+        color: #fff; /* Text color */
+        padding: 5px 10px;
+        text-decoration: none;
+    }
+
+    .btn-return:hover {
+        background-color: #cc0000; /* Darker red on hover */
+    }
+</style>
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Order Details</h2>
+            {% for i in order.orderitem_set.all %}
+            <div class="card mb-4">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{{ i.image }}" alt="{{ i.product.product_name }}" class="img-fluid">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ i.product.product_name }}</h5>
+                            <p class="card-text">Price: {{ i.product.price }}</p>
+                            <p class="card-text">Quantity: {{ i.quantity }}</p>
+                            <p class="card-text">Order Date: {{ i.order.date }}</p>
+                            <p class="card-text">Order Status: {{ i.order.status }}</p>
+                            <p class="card-text">Expected Delivery: DD/MM/YYYY</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="col-md-4">
+            <div class="order-summary">
+                <h3 class="text-center">Order Summary</h3>
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Subtotal:</span>
+                        <span>{{ order.amount|add:-70 }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Shipping:</span>
+                        <span>70</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Payment Method:</span>
+                        <span>{{ order.payment_type }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <strong>Total:</strong>
+                        <strong>{{ order.amount }}</strong>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="delivery-address mt-4">
+                <h3 class="text-center">Delivery Address</h3>
+                {% for i in orderAddress %}
+                <address class="my-3">
+                    <p class="mb-1">Name: {{ i.address.first_name }} {{ i.address.last_name }}</p>
+                    <p class="mb-1">Address: {{ i.address.address }}</p>
+                    <p class="mb-1">City: {{ i.address.city }}</p>
+                    <p class="mb-1">ZIP Code: {{ i.address.pin_code }}</p>
+                </address>
+                {% endfor %}
+                
+                    {% if order.status == 'completed' %}
+                    <p><strong>If you want to Return The order?<p>
+                    <a href="" class="btn-return" data-toggle="modal" data-target="#confirmReturnModal{{order.id}}" data-order-id="{{ order.id }}">Return</a>
+                    {% elif order.status == 'refunded' %}
+                    <div class="modal-body">
+                        <p>The Order Amound is Refunded In Your Wallet !!!</p>
+                    </div>
+                    {% else %}
+                    <p><strong>If you want to Cancel The order?<p>
+                    <a href="" class="btn-return" data-toggle="modal" data-target="#confirmReturnModal{{order.id}}" data-order-id="{{ order.id }}">Cancel</a>
+                    {% endif %}
+                <!-- Confirmation Modal for Return -->
+                <div class="modal fade" id="confirmReturnModal{{order.id}}" tabindex="-1" role="dialog" aria-labelledby="confirmReturnModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmReturnModalLabel{{order.id}}">Confirm Return</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            {% if order.status == 'completed' %}
+                            <div class="modal-body">
+                                <p>Are you sure you want to return this order?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <a href="/user/return_order/{{order.id}}" class="btn btn-danger" id="confirmReturnBtn">Return Order</a>
+                            </div>
+        
+                            {% else %}
+                            <div class="modal-body">
+                                <p>Are you sure you want to cancel this order?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <a href="/user/return_order/{{order.id}}" class="btn btn-danger" id="confirmReturnBtn">Cancel Order</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+              <button class="btn btn-danger">
+                <a href="{% url 'generate_invoice_pdf' order.id %}" target="_blank">Download Invoice</a>
+              </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+<script>
+    $(document).ready(function() {
+        
+        $('.btn-return').click(function() {
+           
+            var orderID = $(this).data('order-id');
+            console.log(orderID)
+    
+            
+            var returnURL = '/return_order' + orderID + '/'; 
+    
+            $(this).attr('href', returnURL);
+        });
+    });
+    </script>
+    </html>
+    

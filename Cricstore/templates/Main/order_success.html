@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    /* Add your custom styles here */
+
+    .container {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .alert {
+        background-color: #4CAF50;
+        color: white;
+        border: 1px solid #4CAF50;
+        padding: 20px;
+    }
+
+    .alert h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .alert p {
+        font-size: 16px;
+        margin-top: 10px;
+    }
+
+    /* Add more custom styles below */
+
+    /* Add a border to the alert box */
+    .alert {
+        border: 1px solid #4CAF50;
+        border-radius: 10px;
+    }
+
+    /* Style the "View My Orders" link */
+    .alert a {
+        text-decoration: none;
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        display: inline-block;
+        margin-top: 20px;
+    }
+
+    /* Add hover effect to the link */
+    .alert a:hover {
+        background-color: #2677a0;
+    }
+
+    /* Add more styles as needed */
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="alert alert-success mt-5">
+                <h2>Order Placed Successfully!</h2>
+                <p style ="color:black">Your order has been received and will be processed shortly. Thank you for shopping with us!</p>
+                <p><a href="{% url 'orders_list' %}">View My Orders</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

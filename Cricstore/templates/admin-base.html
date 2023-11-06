@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+{% load static %} 
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="">
+    <title>CrickStore Admin</title>
+    <!-- Custom CSS -->
+    <link href="{% static 'assets1/css/float-chart.css'%}" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'assets1/css/style.min.css'%}" rel="stylesheet">
+    <link href="{% static 'assets1/css/custom.css'%}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Style the pagination container */
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Style the pagination links */
+.pagination-link {
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 2px;
+    background-color: #007bff; /* Change to your desired background color */
+    color: #fff; /* Change to your desired text color */
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.pagination-link:hover {
+    background-color: #0056b3; /* Change to a darker shade for hover effect */
+}
+
+/* Style the current page text */
+.current-page {
+    font-weight: bold;
+    margin: 0 10px;
+}
+</style>
+   
+</head>
+
+<body>
+
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+    
+    <div id="main-wrapper">
+        
+
+        {% include 'includes/adminheader.html' %}
+        {% include 'includes/adminsidebar.html' %}
+        
+    <main>
+        {% block content %}
+
+        {% endblock content %}
+    </main>
+        
+       
+        
+
+            <footer class="footer text-center">
+                All Rights Reserved by Cricstore-admin. Designed and Developed by <a href="https://wrappixel.com">SumindasVr</a>.
+            </footer>
+            
+        </div>
+       
+    </div>
+</body>
+    <script src="{% static 'assets1/js/jquery.min.js'%}"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="{% static 'assets1/js/popper.min.js'%}"></script>
+    <script src="{% static 'assets1/js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'assets1/js/perfect-scrollbar.jquery.min.js'%}"></script>
+    <script src="{% static 'assets1/js/sparkline.js'%}"></script>
+    <!--Wave Effects -->
+    <script src="{% static 'assets1/js/waves.js'%}"></script>
+    <!--Menu sidebar -->
+    <script src="{% static 'assets1/js/sidebarmenu.js'%}"></script>
+    <!--Custom JavaScript -->
+    <script src="{% static 'assets1/js/custom.min.js'%}"></script>
+    <!--This page JavaScript -->
+    <!-- <script src="dist/js/pages/dashboards/dashboard1.js"></script> -->
+    <!-- Charts js Files -->
+    <script src="{% static 'assets1/js/excanvas.js'%}"></script>
+    <script src="{% static 'assets1/js/jquery.flot.js'%}"></script>
+    <script src="{% static 'assets1/js/jquery.flot.pie.js'%}"></script>
+    <script src="{% static 'assets1/js/jquery.flot.time.js'%}"></script>
+    <script src="{% static 'assets1/js/jquery.flot.stack.js'%}"></script>
+    <script src="{% static 'assets1/js/jquery.flot.crosshair.js'%}"></script>
+    <script src="{% static 'assets1/js/jquery.flot.tooltip.min.js'%}"></script>
+    <script src="{% static 'assets1/js/chart-page-init.js'%}"></script>
+
+
+
+</html>

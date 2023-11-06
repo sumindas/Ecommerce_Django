@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load cart_tag %}
+{% block content %}
+
+<main>
+    <!-- page-banner-area-start -->
+    <div class="page-banner-area page-banner-height-2" data-background="{% static 'assets/img/banner/page-banner-4.jpg' %}">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="page-banner-content text-center">
+                        <h4 class="breadcrumb-title">Your Cart</h4>
+                        <div class="breadcrumb-two">
+                            <nav>
+                               <nav class="breadcrumb-trail breadcrumbs">
+                                  <ul class="breadcrumb-menu">
+                                     <li class="breadcrumb-trail">
+                                        <a href="index.html"><span>Home</span></a>
+                                     </li>
+                                     <li class="trail-item">
+                                        <span>Cart</span>
+                                     </li>
+                                  </ul>
+                               </nav> 
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- page-banner-area-end -->
+
+    <!-- cart-area-start -->
+    <section class="cart-area pt-120 pb-120">
+        <div class="container">
+           <div class="row">
+              <div class="col-12">
+                    <form action="#">
+                       <div class="table-content table-responsive">
+                          <table class="table">
+                                <thead>
+                                   <tr>
+                                      <th class="product-thumbnail">Images</th>
+                                      <th class="cart-product-name">Product</th>
+                                      <th class="product-price">Unit Price</th>
+                                      <th class="product-quantity">Quantity</th>
+                                      <th class="product-subtotal">Total</th>
+                                      
+                                      <th class="product-remove">Remove</th>
+                                   </tr>
+                                </thead>
+                                <tbody>
+                                    {% for key,value in request.session.cart.items %}
+                                   
+                                   <tr id = "">
+                                      <td class="product-thumbnail"><a href="shop-details.html"><img src="{{value.featured_image}}" alt=""></a></td>
+                                      <td class="product-name">{{value.product_name}}<a href="shop-details.html"></a></td>
+                                      <td class="product-price"><span class="amount">₹{{value.price}}</span></td>
+                                      <td class="product-quantity w-25 ">
+                                          {% csrf_token %}
+                                          <div class="row">
+                                             <div class="col-4">
+                                                <a href="{% url 'item_decrement' value.product_id %}" class="text-center decrease-quantity" data-product-id="{{ value.product_id }}">-</a>
+                                             </div>
+                                             <div class="col-4">
+                                                <input type="text" value="{{ value.quantity }}" class="form-control text-center border-0 quantity-display" id="quantity-{{ value.product_id }}" readonly>
+                                             </div>
+                                             <div class="col-4">              
+                                                <a href="{% url 'item_increment' value.product_id %}"class="text-center increase-quantity" data-product-id="{{ value.product_id }}">+</a>         
+                                             </div>
+                                          </div>
+                                       </td>
+                           
+                                      <td class="product-subtotal"id="subtotal-{{ value.product_id }}">{{ value.price|multiply:value.quantity }}<span class="amount"></span></td>
+                        
+                                      <td class="product-remove"><a href="{% url 'item_clear' value.product_id %}"><i class="fa fa-times"></i></a></td>
+                                   </tr>
+                                   {% endfor %} 
+                                </tbody>
+                          </table>
+                       </div>
+                       <div class="row">
+                          <div class="col-12">
+                           <form action ="" method = "post">
+                                <div class="coupon-all">
+                                   <div class="coupon2">
+                                      <a class="tp-btn-h1" href ="{% url 'cart_clear' %}" name="clear_cart" type="submit">Clear cart</a>
+                                   </div>
+                                </div>
+                          </div>
+                        </form>
+                       </div>
+                       <div class="row justify-content-end">
+                          <div class="col-md-5">
+                                <div class="cart-page-total">
+                                   <h2>Cart totals</h2>
+                                   <ul class="mb-20">
+                                      <li>Items :<span id="items-count">{{ cart_total_amount }}</span></li>
+                        
+                                      {% with lower_limit=1 upper_limit=300 %}
+                                      {% if cart_total_amount >= lower_limit and cart_total_amount <= upper_limit %} 
+                                      <li class ="text-success" >Delivery Charge :<span>₹ 40</span></li>
+                                      <li class ="text-success" > Order Total :<span class ="text-success"id="order-total">₹ {{cart_total_amount|add:40}}</span></li>
+                                      {% else %}
+                                      <li>Delivery Charge :<span>Free</span></li>
+                                      <li class ="text-success" >Order Total :<span id="order-total" class ="text-success">₹ {{cart_total_amount}}</span></li>
+                                      {% endif %}
+                                      {% endwith %} 
+                                   </ul>
+                                   <a href ="{% url 'checkout' %}" type= "submit" class="tp-btn-h1" >Proceed to checkout</a>
+                                </div>
+                          </div>
+                       </div>
+                    </form>
+              </div>
+           </div>
+        </div>
+     </section>
+     <!-- cart-area-end -->
+     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <script>
+      $(document).ready(function () {
+         function updateCartTotalCount(cartTotal) {
+            $('#items-count').text(cartTotal);
+        }
+        function updateOrderTotal(orderTotal) {
+         $('#order-total').text('₹ ' + orderTotal);
+     }
+          function updateCartItem(product_id, action) {
+              $.ajax({
+                  url: `/update_cart_item/${product_id}/${action}/`,
+                  method: 'GET',
+                  dataType: 'json',
+                  success: function (data) {
+                     const newQuantity = data.new_quantity;
+                     const newCartTotal = data.new_cart_total;
+                     const newSubtotal = data.new_subtotal;
+                     const newOrderTotal = data.new_order_total;
+                     console.log(newQuantity,newCartTotal,newSubtotal,newOrderTotal)
+                      
+                     $(`#quantity-${product_id}`).val(newQuantity);
+                     $('#cart_total_amount').text(newCartTotal);
+                     $(`#subtotal-${product_id}`).text(newSubtotal);
+                     updateCartTotalCount(newCartTotal);
+                     updateOrderTotal(newOrderTotal);
+                  
+                  },
+                  error: function (error) {
+                     console.log("AJAX Error:", error);
+                     // Handle errors
+                 }
+              });
+          }
+      
+          // Handle click events for increment and decrement
+          $('.decrease-quantity').on('click', function (e) {
+              e.preventDefault();
+              const product_id = $(this).data('product-id');
+              updateCartItem(product_id, 'decrement');
+          });
+      
+          $('.increase-quantity').on('click', function (e) {
+              e.preventDefault();
+              const product_id = $(this).data('product-id');
+              updateCartItem(product_id, 'increment');
+          });
+      });
+      
+      setInterval(function () {
+         $.ajax({
+            url: '{% url 'get_cart_data' %}', 
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+   
+               $('#cart_total_amount').text(data.cart_total);
+               
+            },
+            error: function (error) {
+              
+            }
+         });
+      }, 2000);  
+      const initialCartTotal = '{{ cart_total_amount }}'; 
+      updateCartTotalCount(initialCartTotal);
+      const initialOrderTotal = '{{ cart_total_amount }}'; 
+      updateOrderTotal(initialOrderTotal);
+
+      </script>
+      
+      
+
+</main>
+
+
+{% endblock content%}

@@ -1,0 +1,99 @@
+<!-- otp_verification/templates/otp_verification/verify_otp.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .abc{
+        color: #d53e23;
+        text-align: center;
+    }
+</style>
+
+<div class="account-area mt-70 mb-70">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6"style = "margin-left:300px">
+                <div class="basic-login">
+                    <h5 style = "text-align:center">Register</h5>
+                    <form action="{% url 'register' %}" method = "post">
+                        {% csrf_token %}
+                        <label for="username">Fullname   <span>*</span></label>
+                        <input id="username" type="text" placeholder="Enter your Fullname" name = "username">
+                        <label for="email">Email Address <span>*</span></label>
+                        <input id="email" type="email" placeholder="Email address..."name = "email">
+                        <label for="email">Mobile Number <span>*</span></label>
+                        <input id="email" type="mobile" placeholder="Mobile Number..."name = "mobile">
+                        <label for="userpass">Password <span>*</span></label>
+                        <input id="userpass" type="password" placeholder="Enter password..." name = "pass1">
+                        <label for="userpass">Confirm Password <span>*</span></label>
+                        <input id="userpass" type="password" placeholder="Enter password..." name = "pass2">
+                        <span class="forgot-login f-right">
+                            <a href="{% url 'verified_login' %}">Already Have Account?</a>
+                         </span>
+                        <div>
+                            {% for message in messages %}
+                            <p class="abc"> {{message}} </p>
+                            {% endfor %}
+                        </div>
+                        </div>
+                       
+                        <button type = "submit" class="tp-in-btn w-100">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+<style>
+
+.container {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+}
+
+/* Style the Verify OTP button */
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* Style the Resend OTP link */
+a[href='#'] {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+a[href='#']:hover {
+    text-decoration: underline;
+}
+</style>

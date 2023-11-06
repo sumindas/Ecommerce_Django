@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* CSS for yellow buttons with hover effect */
+.btn-yellow {
+    background-color: #ffc107; /* Yellow color */
+    color: #fff; /* Text color */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+/* Hover effect */
+.btn-yellow:hover {
+    background-color: #ffca28; /* Lighter yellow color on hover */
+}
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body background color and font */
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+/* Container styling */
+#container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+}
+
+/* Heading styles */
+h1 {
+    text-align: center;
+    color: #007bff; /* Blue color */
+}
+
+/* Form styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+    color: #28a745; /* Green color */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="mobile"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #333;
+}
+
+/* Yellow button with hover effect */
+.btn-yellow {
+    background-color: #ffc107; /* Yellow color */
+    color: #fff; /* Text color */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+.btn-yellow:hover {
+    background-color: #ffca28; /* Lighter yellow color on hover */
+}
+
+/* Address section styles */
+.address-section {
+    border-top: 1px solid #ccc;
+    margin-top: 30px;
+    padding-top: 20px;
+}
+
+.address-heading {
+    font-size: 20px;
+    font-weight: bold;
+    color: #dc3545; /* Red color */
+}
+
+.address-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: #17a2b8; /* Turquoise color */
+}
+
+/* Add New Address button */
+.btn-add-address {
+    background-color: #28a745; /* Green color */
+    color: #fff; /* Text color */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+.btn-add-address:hover {
+    background-color: #218838; /* Darker green color on hover */
+}
+
+</style>
+<div class="container mt-5" id="container">
+    <div class="row">
+        <!-- Left Sidebar -->
+        <div class="col-lg-3">
+            <div class="list-group">
+                <a href="{% url 'profile' %}" class="list-group-item list-group-item-action ">Account Details</a>
+                <a href="#address-section" class="list-group-item list-group-item-action active">Address</a>      
+                <a href="#address-section" class="list-group-item list-group-item-action">Orders</a>
+                <a href="#address-section" class="list-group-item list-group-item-action">Download</a>
+                <a href="{% url 'logout' %}" class="list-group-item list-group-item-action">Sign Out</a>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <h2>Edit Address</h2>
+    <form action = "{% url 'update_address' newaddress.id %}" method = "post">
+        {% csrf_token %}
+        <div class="form-group d-flex ">
+            <div class="form-group col-lg-6">
+                <label for="firstName">First Name</label>
+                <input type="text" class="form-control" value = "{{newaddress.first_name}}" name = "fname"  id="firstName" placeholder="Enter First Name" required>
+            </div>
+            <div class="form-group col-lg-6">
+                <label for="lastName">Last Name</label>
+                <input type="text" class="form-control" value = "{{newaddress.last_name}}" name = "lname" style ="margin-left:8px" id="lastName" placeholder="Enter Last Name" required>
+            </div>
+        </div>
+        <div class = "form-group d-flex">
+        <div class="form-group col-lg-6 ">
+            <label for="email">Email Address</label>
+            <input type="email" class="form-control" value = "{{newaddress.email}}" name ="email" id="email" placeholder="Enter Email Address" required>
+        </div>
+        <div class="form-group col-lg-6 ">
+            <label for="phoneNumber">Phone Number</label>
+            <input type="tel" class="form-control" value = "{{newaddress.number}}" name = "phone" style = "padding:10px;margin-left:8px;" id="phoneNumber" placeholder="Enter Phone Number" required>
+        </div>
+    </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" class="form-control"value = "{{newaddress.address}}" name = "address" id="address" placeholder="Enter Address" required>
+        </div>
+        <div class="form-group d-flex">
+            <div class="form-group col-lg-6">
+                <label for="country">Country</label>
+                <input type="text" class="form-control" value = "{{newaddress.country}}" name = "country" id="country" placeholder="Enter Country" required>
+            </div>
+            <div class="form-group col-lg-6">
+                <label for="state">State</label>
+                <input type="text" class="form-control" value = "{{newaddress.state}}" name = "state" style ="margin-left:8px" id="state" placeholder="Enter State" required>
+            </div>
+        </div>
+        <div class="form-group d-flex">
+            <div class="form-group col-lg-6">
+                <label for="city">City</label>
+                <input type="text" class="form-control" value = "{{newaddress.city}}" name = "city" id="city" placeholder="Enter City" required>
+            </div>
+            <div class="form-group col-lg-6">
+                <label for="pinCode">Pin Code</label>
+                <input type="text" class="form-control" value = "{{newaddress.pin_code }}" name = "pincode" style ="margin-left:8px" id="pinCode" placeholder="Enter Pin Code" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+
+<!-- Add Bootstrap JS scripts here -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock content %}

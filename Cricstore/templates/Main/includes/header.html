@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <body>
+        <!-- header-start -->
+ <header class="header d-blue-bg">
+
+     <div class="header-mid">
+         <div class="container">
+             <div class="heade-mid-inner">
+                 <div class="row align-items-center">
+                     <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4">
+                         <div class="header__info">
+                             <div class="logo">
+                                 <a href="{% url 'store/home' %}" class="logo-image"><img src="{% static '/assets/img/logo/cricstore-logoo.PNG' %}" alt="logo"></a>
+                             </div>
+                         </div>
+                     </div>
+                     <div class="col-xl-5 col-lg-4 d-none d-lg-block">
+                         <div class="header__search">
+                             <form action="#">
+                                 <div class="header__search-box">
+                                     <input class="search-input" type="text" placeholder="I'm shopping for...">
+                                     <button class="button" type="submit"><i class="far fa-search"></i></button>
+                                 </div>
+                             </form>
+                         </div>
+                     </div>
+                     <div class="col-xl-4 col-lg-5 col-md-8 col-sm-8">
+                         <div class="header-action">
+                             <div class="block-userlink">
+                                 <a class="icon-link" href="{% url 'user/myaccount' %}">
+                                 <i class="flaticon-user"></i>
+                                 <span class="text">
+                                 <span class="sub">Login </span>
+                                 My Account </span>
+                                 </a>
+                             </div>
+                             <div class="block-wishlist action">
+                                 <a class="icon-link" href="wishlist.html">
+                                 <i class="flaticon-heart"></i>
+                                 {% comment %} <span class="count">0</span> {% endcomment %}
+                                 <span class="text">
+                                 <span class="sub">Favorite</span>
+                                 My Wishlist </span>
+                                 </a>
+                             </div>
+                             <div class="block-cart action">
+                                 <a class="icon-link" href="cart.html">
+                                 <i class="flaticon-shopping-bag"></i>
+                                 <span class="count">1</span>
+                                 <span class="text">
+                                 <span class="sub">Your Cart:</span>
+                                 </span>
+                                 </a>
+    
+                                         </ul>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+     <div class="header__bottom">
+         <div class="container">
+             <div class="row g-0 align-items-center">
+                 <div class="col-lg-3">                        
+                     <div class="cat__menu-wrapper side-border d-none d-lg-block">
+                         <div class="cat-toggle">
+                             <button type="button" class="cat-toggle-btn cat-toggle-btn-1"><i class="fal fa-bars"></i> Shop by department</button>
+                             <div class="cat__menu">
+                                 <nav id="mobile-menu" style="display: block;">
+                                     <ul>
+                                        {% for i in main_category  %}
+                                         <li>
+                                             <a href="shop.html">{{i.name}} <i class="far fa-angle-down"></i></a>
+                                             <ul class="mega-menu">
+                                                {% for j in i.category_set.all %}
+                                                 <li><a href="shop.html">{{j.name}}</a>
+                                                     <ul class="mega-item">
+                                                        {% for sub_cat in j.sub_cateogory_set.all %}
+                                                         <li><a href="product-details.html">{{sub_cat.name}}</a></li>
+                                                        {% endfor %}
+                                                     </ul>
+                                                 </li>
+                                                
+                                                {% endfor %}
+                                                                        
+                                       
+                                    </li>
+                                     </ul>
+                                     {% endfor %}
+                                 </nav>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="col-lg-6 col-md-6 col-3">
+                   <div class="header__bottom-left d-flex d-xl-block align-items-center">
+                     <div class="side-menu d-lg-none mr-20">
+                       <button type="button" class="side-menu-btn offcanvas-toggle-btn"><i class="fas fa-bars"></i></button>
+                     </div>
+                     <div class="main-menu d-none d-lg-block">
+                         <nav>
+                             <ul>
+                                 <li>
+                                     <a href="{% url 'store/home' %}" class="active">Home <i class=""></i></a>
+                                   
+                                 <li><a href="about.html">Bats</a></li>
+                                 <li><a href="about.html">Balls</a></li>
+                                 <li><a href="about.html">Equipments</a></li>
+                                 <li><a href="about.html">Accessories</a></li>
+
+             </div>
+         </div>
+     </div>
+ </header>
+ <!-- header-end -->
+        
+       
+    </body>
+</html>

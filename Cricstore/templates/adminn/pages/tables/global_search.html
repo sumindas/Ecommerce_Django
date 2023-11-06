@@ -1,0 +1,140 @@
+{% extends "admin-base.html" %}
+
+<style>
+    /* Add your CSS styling here */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .search-results {
+        max-width: 800px;
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        text-align: left;
+    }
+    h1 {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+    li {
+        margin-bottom: 10px;
+    }
+    a {
+        text-decoration: none;
+        color: #007bff;
+    }
+    h2 {
+        color: #333;
+        font-size: 20px;
+        margin-top: 20px;
+    }
+    .no-results {
+        color: #777;
+        font-style: italic;
+    }
+</style>
+
+{% block content %}
+<div class="container text-center">
+    <div class="search-results">
+        <h1>Search Results for "{{ search_query }}"</h1>
+
+        <h2>Users</h2>
+        <ul>
+            {% if users %}
+                {% for user in users %}
+                    <li><a href="{% url 'users' %}">{{ user.full_name }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li class="no-results">No users found.</li>
+            {% endif %}
+        </ul>
+
+        <h2>Categories</h2>
+        <ul>
+            {% if categories %}
+                {% for category in categories %}
+                    {% if not category.is_deleted %}
+                        <li><a href="{% url 'category' %}">{{ category.name }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <li class="no-results">No categories found.</li>
+            {% endif %}
+        </ul>
+
+        <h2>Subcategories</h2>
+        <ul>
+            {% if subcategories %}
+                {% for subcategory in subcategories %}
+                    {% if not subcategory.is_deleted %}
+                        <li><a href="{% url 'subcategory' %}">{{ subcategory.name }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <li class="no-results">No subcategories found.</li>
+            {% endif %}
+        </ul>
+
+        <h2>Orders</h2>
+        <ul>
+            {% if orders %}
+                {% for order in orders %}
+                    <li><a href="{% url 'orders' %}">{{ order.id }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li class="no-results">No orders found.</li>
+            {% endif %}
+        </ul>
+
+        <h2>Reviews</h2>
+        <ul>
+            {% if reviews %}
+                {% for review in reviews %}
+                    <li><a href="{% url 'admin_reviews' %}">{{ review.user_name }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li class="no-results">No reviews found.</li>
+            {% endif %}
+        </ul>
+
+        <h2>Coupons</h2>
+        <ul>
+            {% if coupons %}
+                {% for coupon in coupons %}
+                    <li><a href="{% url 'coupon' %}">{{ coupon.code }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li class="no-results">No coupons found.</li>
+            {% endif %}
+        </ul>
+
+        <h2>Offers</h2>
+        <ul>
+            {% if offers %}
+                {% for offer in offers %}
+                    <li><a href="{% url 'offer' %}">{{ offer.title }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li class="no-results">No offers found.</li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endblock content %}

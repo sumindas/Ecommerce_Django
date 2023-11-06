@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .abc {
+        color: #d53e23;
+        text-align: center;
+    }
+</style>
+
+<div class="container otp-verification" style="margin-top: 70px; margin-bottom: 70px">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">OTP Verification</h2>
+                    <form method="post" id="otp-form"> 
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="otp">Enter OTP:</label>
+                            <input type="text" id="otp" name="otp" class="form-control" required>
+                        </div>
+                        <div>
+                            {% for message in messages %}
+                            <p class="abc"> {{message}} </p>
+                            {% endfor %}
+                        </div>
+                        <button type="submit" style="margin-top: 15px" class="btn btn-primary">Verify OTP</button>
+                        <!-- Add this to your template -->
+                        <div id="resend-otp-container">
+                            <p>Didn't receive the OTP? <button id="resend-otp-button">Resend OTP</button> in <span id="countdown-timer">60 seconds</span></p>
+                        </div>
+                    </form>
+                    <!-- Add the following OTP expired message and resend button (hidden by default) -->
+                    <p id="otp-expired-message" class="abc" style="display: none;">OTP has expired. Resend OTP to try again.</p>
+                    <button id="resend-otp-button" style="margin-top: 15px; display: none;" class="btn btn-primary">Resend OTP</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to update the countdown timer
+    function updateTimer(minutes, seconds) {
+        document.getElementById('countdown-timer').textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    }
+
+    // Countdown timer
+    let countdown = 60; // 60 seconds
+    let countdownInterval = setInterval(function () {
+        const minutes = Math.floor(countdown / 60);
+        const seconds = countdown % 60;
+        updateTimer(minutes, seconds);
+        countdown--;
+
+        if (countdown < 0) {
+            clearInterval(countdownInterval);
+            // Handle the expiration of the timer here
+            document.getElementById('submit-button').disabled = true; // Disable the submit button
+            document.getElementById('otp').disabled = true; // Disable the OTP input
+            document.getElementById('countdown-timer').style.display = 'none'; // Hide the countdown timer
+            document.getElementById('otp-expired-message').style.display = 'block'; // Show the expired message
+            document.getElementById('otp-resend-button').style.display = 'block'; // Show the "Resend OTP" button
+        }
+    }, 1000); // Update every 1 second
+
+    document.getElementById('otp-form').addEventListener('submit', function (event) {
+        const otpField = document.getElementById('otp');
+        const otpValue = otpField.value;
+
+        if (otpValue.trim() === '' || isNaN(otpValue) || parseInt(otpValue) < 0) {
+            alert('Please enter a valid OTP.');
+            event.preventDefault(); // Prevent the form from submitting
+        }
+    });
+
+    // Add an event listener for the "Resend OTP" button
+    document.getElementById('resend-otp-button').addEventListener('click', function () {
+        // Handle the action when the "Resend OTP" button is clicked
+        // You can trigger the OTP resend logic here
+        // For example, you can make an AJAX request to your server to resend OTP
+    });
+</script>
+{% endblock %}
+
+
+
+

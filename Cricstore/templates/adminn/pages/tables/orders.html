@@ -1,0 +1,150 @@
+{% extends 'admin-base.html' %}
+
+{% block content %}
+<style>
+    /* Styles for the modal overlay */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999; /* Set a high z-index */
+    }
+
+    /* Styles for the modal content */
+    .modal-content {
+        display: none;
+        position: fixed; /* Changed to fixed */
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        padding: 20px;
+        max-width: 400px;
+        z-index: 1000; /* Make sure it's on top */
+    }
+</style>
+
+<div class="row">
+    <div class="col-12 text-center">
+        <h1>All Orders</h1>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-7">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer name</th>
+                    <th>Order date</th>
+                    <th>Order address</th>
+                    <th>Order status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.user.full_name }}</td>
+                        <td>{{ order.date }}</td>
+                        <td>{{ order.address.address }}</td>
+                        <td>{{ order.status }}</td>
+
+                        {% if order.status == 'Canceled' %}
+                            <td>Order Cancelled</td>
+                        {% elif order.status == 'refunded' %}
+                            <td>Order Returned</td>
+                        {% elif order.status == 'completed' %}
+                            <td>Order Delivered</td>
+                        {% else %}
+                        <td>
+                            <button type="button" class="btn btn-primary" onclick="openModal('{{ order.id }}')">Edit</button>
+                        </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+</div>
+
+<!-- Modal overlay -->
+<div class="modal-overlay" id="modalOverlay"></div>
+
+<!-- Modal content -->
+<!-- Modal content -->
+<div class="modal-content" id="modalContent">
+  <h1 class="modal-title fs-5">Change order status</h1>
+  <button type="button" class="btn-close" onclick="closeModal()"></button>
+  <form method="post" action="" id="updateOrderForm">
+      {% csrf_token %}
+      <div class="dropdown">
+          <select name="status" id="status" class="btn btn-secondary dropdown-toggle">
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="refunded">Refunded</option>
+              <option value="on_hold">On Hold</option>
+          </select>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+          <button type="submit" class="btn btn-primary" onclick="applyChanges('{{ order.id }}')">Apply</button>
+      </div>
+  </form>
+</div>
+<script>
+    function openModal(orderId) {
+        const modalOverlay = document.getElementById("modalOverlay");
+        const modalContent = document.getElementById("modalContent");
+        const form = document.getElementById("updateOrderForm");
+
+        // Set the modal content and overlay to be visible
+        modalOverlay.style.display = "block";
+        modalContent.style.display = "block";
+
+        // Update the form's action URL with the order ID
+        form.action = `/adminn/update_order/${orderId}`;
+
+        // Add event listeners for the buttons
+        const closeButton = document.querySelector(".modal-content .btn-close");
+        closeButton.addEventListener("click", closeModal);
+    }
+
+    function closeModal() {
+        const modalOverlay = document.getElementById("modalOverlay");
+        const modalContent = document.getElementById("modalContent");
+
+        // Set the modal content and overlay to be hidden
+        modalOverlay.style.display = "none";
+        modalContent.style.display = "none";
+
+        // Remove event listeners for the buttons
+        const closeButton = document.querySelector(".modal-content .btn-close");
+        closeButton.removeEventListener("click", closeModal);
+    }
+
+    function applyChanges(orderId) {
+        const form = document.getElementById("updateOrderForm");
+
+        // Submit the form with the updated action URL
+        form.submit();
+
+        // Close the modal (you can add this inside your Django view logic)
+        closeModal();
+    }
+</script>
+
+{% endblock content %}
