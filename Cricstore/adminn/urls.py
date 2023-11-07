@@ -67,5 +67,13 @@ urlpatterns = [
     #Admin_Search
     path('admin_search',views.admin_search,name='admin_search'),
     
+    #banners
+    path('banners',views.sections_banners,name='sections_banners'),
+    path('add_slider',views.add_slider,name='add_slider'),
+    path('add_banner',views.add_banner,name='add_banner'),
+    path('add_section',views.add_section,name='add_section'),
+    
+    
+    
     
 ]

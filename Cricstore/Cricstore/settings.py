@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'store',
     'adminn',
     'cart',
+    
 ]
 AUTH_USER_MODEL = 'user.CustomUser'
 CART_SESSION_ID = 'cart'
@@ -59,6 +60,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'Cricstore.urls'
+
+
 
 TEMPLATES = [
     {
@@ -200,6 +203,7 @@ CKEDITOR_CONFIGS = {
         ),
     }
 }
+
 
 razor_pay_key_id = 'rzp_test_FIZcMWBmGnqoqG'
 key_secret = 'hwkP8FNx8gACO7YNZfQvUY1t'

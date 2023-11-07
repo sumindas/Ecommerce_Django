@@ -4,6 +4,7 @@ from store.models import *
 from user.models import *
 from django.contrib import messages, auth
 from user.views import validate_email
+from .forms import *
 from django.contrib.auth import authenticate, logout
 from django.views.decorators.cache import cache_control, never_cache
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -171,6 +172,45 @@ def get_orders_by_month(request):
         orders_by_month[month] += 1
 
     return JsonResponse(orders_by_month, safe=False)
+
+
+def sections_banners(request):
+    sli = slider.objects.all()
+    sec = Section.objects.all()
+    ban = banner_area.objects.all()
+    return render(request,'adminn/pages/tables/sections.html',{'sec':sec,'ban':ban,'sli':sli})
+
+def add_slider(request):
+    if request.method == 'POST':
+        form = SliderForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('sections_banners')
+
+    form = SliderForm()
+    return render(request, 'adminn/pages/tables/sections.htm', {'form': form})
+
+
+def add_banner(request):
+    if request.method == 'POST':
+        form = BannerForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('sections_banners')
+
+    form = BannerForm()
+    return render(request, 'adminn/pages/tables/sections.htm', {'form': form})
+
+def add_section(request):
+    if request.method == 'POST':
+        form = SectionForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('sections_banners')
+
+    form = SectionForm()
+    return render(request, 'adminn/pages/tables/sections.htm', {'form': form})
+
 
 
 @never_cache
