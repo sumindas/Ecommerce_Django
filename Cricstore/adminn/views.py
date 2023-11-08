@@ -307,10 +307,6 @@ def add_product(request):
     )
 
 
-def view_product(request):
-    return render(request, "adminn/pages/tables/view_product.html")
-
-
 def edit_products(request, id):
     cat = Main_category.objects.all()
     sec = Section.objects.all()
