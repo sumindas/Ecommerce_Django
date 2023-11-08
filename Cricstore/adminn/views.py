@@ -246,7 +246,7 @@ def unblock_user(request, id):
 @login_required(login_url="admin_login")
 def product(request):
     main_cat = Main_category.objects.all()
-    product = Product.objects.all().order_by("categories").filter(is_deleted=False)
+    product = Product.objects.all().order_by("-id").filter(is_deleted=False)
     per_page = 5
     paginator = Paginator(product, per_page)
     page_number = request.GET.get("page")

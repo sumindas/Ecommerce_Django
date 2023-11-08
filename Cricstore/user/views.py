@@ -14,7 +14,6 @@ import re
 from cart.cart import Cart
 from django.conf import settings
 import logging
-
 logger = logging.getLogger(__name__)
 from decimal import Decimal
 import razorpay
@@ -51,10 +50,7 @@ def register(request):
             return redirect("myaccount")
 
         if not is_valid_password(pass1):
-            message.error(
-                request,
-                "Password Contain Atleast One capital,One special charactor,One Number and in Length of 8 characters",
-            )
+            messages.error(request,"Password Contain Atleast One capital,One special charactor,One Number and in Length of 8 characters")
             return redirect("myaccount")
 
         if pass1 != pass2:
@@ -73,7 +69,7 @@ def register(request):
             messages.error(request, "Email Already Taken")
             return redirect("myaccount")
 
-        message, exp_time = generate_otp()
+        message,exp_time = generate_otp()
         sender_email = "vrsumindas007@gmail.com"
         receiver_mail = email
         password = "tmdw ctte rjef ruhe"
