@@ -48,6 +48,14 @@ def register(request):
         if not (username or email or mobile or pass1 or pass2):
             messages.error(request, "Please Fill Required Fields")
             return redirect("myaccount")
+        
+        if not is_valid_name(username):
+            messages.error(request,"Please Enter Valid Name")
+            return redirect("myaccount")
+        
+        if CustomUser.objects.filter(full_name=username):
+            messages.error(request,"Username Already Taken")
+            return redirect("myaccount")
 
         if not is_valid_password(pass1):
             messages.error(request,"Password Contain Atleast One capital,One special charactor,One Number and in Length of 8 characters")
@@ -157,6 +165,13 @@ def is_valid_password(password):
     else:
         return False
 
+
+def is_valid_name(name):
+    if not re.match("^[a-zA-Z]+$", name):
+        return False
+    if not 2 <= len(name) <= 50:
+        return False
+    return True
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @never_cache
