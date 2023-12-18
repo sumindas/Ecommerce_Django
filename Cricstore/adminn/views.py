@@ -188,7 +188,14 @@ def add_slider(request):
             return redirect('sections_banners')
 
     form = SliderForm()
-    return render(request, 'adminn/pages/tables/sections.htm', {'form': form})
+    return render(request, 'adminn/pages/tables/sections.html', {'form': form})
+
+def delete_slider(request, slide_id):
+    slide = get_object_or_404(slider, pk=slide_id)  
+    if request.method == 'POST':
+        slide.delete()
+        return redirect('sections_banners')  
+    return render(request, 'adminn/pages/tables/sections.html', {'slide': slide})
 
 
 def add_banner(request):
@@ -201,6 +208,15 @@ def add_banner(request):
     form = BannerForm()
     return render(request, 'adminn/pages/tables/sections.htm', {'form': form})
 
+
+def delete_banner(request,banner_id):
+    banner = get_object_or_404(banner_area,pk=banner_id)
+    if request.method == 'POST':
+        banner.delete()
+        return redirect('sections_banners')
+    return render(request, 'adminn/pages/tables/sections.htm',{'banner': banner})
+
+
 def add_section(request):
     if request.method == 'POST':
         form = SectionForm(request.POST, request.FILES)
@@ -210,6 +226,15 @@ def add_section(request):
 
     form = SectionForm()
     return render(request, 'adminn/pages/tables/sections.htm', {'form': form})
+
+
+
+def delete_section(request,section_id):
+    section = get_object_or_404(Section,pk=section_id)
+    if request.method == 'POST':
+        section.delete()
+        return redirect('sections_banners')
+    return render(request, 'adminn/pages/tables/sections.htm',{'section': section})
 
 
 

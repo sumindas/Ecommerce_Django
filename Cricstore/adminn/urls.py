@@ -71,6 +71,9 @@ urlpatterns = [
     path('add_slider',views.add_slider,name='add_slider'),
     path('add_banner',views.add_banner,name='add_banner'),
     path('add_section',views.add_section,name='add_section'),
+    path('delete_slider/<int:slide_id>',views.delete_slider,name='delete_slider'),
+    path('delete_banner/<int:banner_id>',views.delete_banner,name='delete_banner'),
+    path('delete_section/<int:section_id>',views.delete_section,name='delete_section'),
     
     
     
