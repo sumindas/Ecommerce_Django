@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-4lv5mnp331a)o2*8z_4-!@3x1k$*@r%0%xo@f5bkuo4(%xz=v3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -79,6 +79,7 @@ TEMPLATES = [
         },
     },
 ]
+TEMPLATES[0]['OPTIONS']['context_processors'].append('django.template.context_processors.request')
 
 WSGI_APPLICATION = 'Cricstore.wsgi.application'
 

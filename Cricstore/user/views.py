@@ -604,7 +604,7 @@ def wallet(request):
 
     return render(request, "account/wallet.html", context)
 
-
+@login_required(login_url="verified_login")
 def wishlist(request):
     user = request.user
     wish = WishList.objects.filter(user=user)

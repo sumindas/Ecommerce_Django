@@ -275,6 +275,8 @@ def get_cart_data(request):
     cart_total = cart.get_total_price()
     return JsonResponse({"cart_total": cart_total})
 
+def custom_404(request, exception):
+    return render(request, 'Error/404_Not_Found.html', {}, status=404)
 
 @login_required(login_url="verified_login")
 def checkout(request):
